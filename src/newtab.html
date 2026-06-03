@@ -8,6 +8,8 @@
         <link rel="stylesheet" href="newtab.css" />
     </head>
     <body>
+        <div id="wallpaper"></div>
+
         <div class="wrap">
             <main class="center-column">
                 <section class="panel">
@@ -24,7 +26,7 @@
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 640 640"
                                     fill="currentColor"
-                                    style="width: 1.2em; height: 1.2em;"
+                                    style="width: 1.2em; height: 1.2em"
                                 >
                                     <!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
                                     <path
@@ -49,16 +51,22 @@
                     </div>
                 </section>
 
-                <section class="list-card recent-sites">
+                <section class="list-card recent-sites" id="recentSitesSection">
                     <h2>Recent sites</h2>
                     <div id="historyList" class="item-list icon-grid"></div>
                 </section>
 
-                <section class="list-card tabs-section">
+                <section class="list-card tabs-section" id="tabsSection">
                     <h2>Open tabs</h2>
                     <div id="tabsList" class="item-list tabs-grid"></div>
                 </section>
             </main>
+
+            <div class="wallpaper-fab">
+                <button id="prevWallpaper" title="Previous">‹</button>
+                <button id="toggleWallpaper" title="Wallpaper">☀</button>
+                <button id="nextWallpaper" title="Next">›</button>
+            </div>
         </div>
 
         <script src="newtab.js"></script>
