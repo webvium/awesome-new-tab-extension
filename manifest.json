@@ -1,11 +1,17 @@
 {
   "manifest_version": 3,
   "name": "Awesome New Tab",
-  "version": "1.0.1",
-  "description": "Tired of Chrome's BORING new tab page? This extension replaces it with a customizable floating console that appears on any webpage. Plus with Bing Wallpaper as the background no more static, predictable wallpaper!",
+  "version": "1.0.2",
+  "description": "A modern, customizable browser new tab experience with stunning Bing Wallpaper backgrounds and a clean, immersive design.",
   "chrome_url_overrides": {
     "newtab": "./src/newtab.html"
   },
+  "icons": {
+    "16": "favicon-16x16.png",
+    "32": "favicon-32x32.png",
+    "192": "android-chrome-192x192.png",
+    "512": "android-chrome-512x512.png"
+  },
   "host_permissions": ["https://www.bing.com/*"],
-  "permissions": ["history", "tabs", "search"]
+  "permissions": ["storage", "tabs", "history", "search"]
 }

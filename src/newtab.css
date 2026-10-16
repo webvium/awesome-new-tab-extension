@@ -36,14 +36,6 @@ body::before {
     );
 }
 
-body.dim-wallpaper::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    z-index: 0;
-}
-
 #wallpaper {
     position: fixed;
     inset: 0;

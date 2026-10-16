@@ -2,13 +2,13 @@
 
 # Awesome New Tab Extension
 
-Tired of Chrome's BORING new tab page? This extension replaces it with a customizable floating console that appears on any webpage. Plus with Bing Wallpaper as the background no more static, predictable wallpaper!
+A modern, customizable browser new tab experience with stunning Bing Wallpaper backgrounds and a clean, immersive design.
 
 ## Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/mrepol742/awesome-new-tab-extension.git --depth 1
+   git clone https://github.com/webvium/awesome-new-tab-extension.git --depth 1
    ```
 2. Open Chrome and navigate to `chrome://extensions/`.
 3. Enable "Developer mode" using the toggle in the top right corner.

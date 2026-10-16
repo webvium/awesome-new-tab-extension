@@ -11,6 +11,7 @@ const wallpaper = document.getElementById("wallpaper");
 const REFRESH_MS = 3 * 60 * 60 * 1000;
 const MAX_RECENT = 8;
 const ICON_MIN_WIDTH = 96;
+const WALLPAPER_STORAGE_KEY = "wallpaperState";
 let recentEntries = [];
 let wallpapers = [];
 let currentIndex = 0;
@@ -80,12 +81,44 @@ function makeIcon(title, url) {
   return a;
 }
 
+async function saveWallpaperState() {
+  const wp = wallpapers[currentIndex];
+  if (!wp) return;
+
+  await chrome.storage.local.set({
+    [WALLPAPER_STORAGE_KEY]: {
+      index: currentIndex,
+      url: wp.url,
+      copyright: wp.copyright,
+      savedAt: Date.now(),
+    },
+  });
+}
+
+async function restoreWallpaperState() {
+  const result = await chrome.storage.local.get(WALLPAPER_STORAGE_KEY);
+
+  return result[WALLPAPER_STORAGE_KEY] || null;
+}
+
 async function loadWallpaper() {
   try {
+    // Restore the previously selected wallpaper immediately.
+    const saved = await restoreWallpaperState();
+
+    if (saved?.url) {
+      wallpaper.style.backgroundImage = `url("${saved.url}")`;
+      status.textContent = saved.copyright || "Bing Wallpaper";
+    }
+
     const response = await fetch(
       "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=3&uhd=1&mkt=en-US",
       { cache: "no-store" },
     );
+
+    if (!response.ok) {
+      throw new Error(`Bing returned HTTP ${response.status}`);
+    }
 
     const data = await response.json();
 
@@ -94,12 +127,29 @@ async function loadWallpaper() {
       copyright: img.copyright,
     }));
 
-    if (!wallpapers.length) throw new Error("No wallpapers");
+    if (!wallpapers.length) {
+      throw new Error("No wallpapers available");
+    }
 
-    currentIndex = 0;
+    // Restore the selected wallpaper if it is still in the feed.
+    const savedIndex = saved
+      ? wallpapers.findIndex((wp) => wp.url === saved.url)
+      : -1;
+
+    currentIndex =
+      savedIndex >= 0
+        ? savedIndex
+        : Math.min(saved?.index ?? 0, wallpapers.length - 1);
+
     applyWallpaper();
+    await saveWallpaperState();
   } catch (error) {
-    status.textContent = "bing wallpaper blocked (check host_permissions)";
+    console.error("Failed to load Bing Wallpaper:", error);
+
+    // Preserve the previously displayed wallpaper on fetch failure.
+    if (!wallpaper.style.backgroundImage) {
+      status.textContent = "Bing Wallpaper unavailable";
+    }
   }
 }
 
@@ -107,8 +157,11 @@ function applyWallpaper() {
   const wp = wallpapers[currentIndex];
   if (!wp) return;
 
-  wallpaper.style.backgroundImage = `url('${wp.url}')`;
-  status.textContent = wp.copyright || "bing wallpaper";
+  wallpaper.style.backgroundImage = `url("${wp.url}")`;
+  status.textContent = wp.copyright || "Bing Wallpaper";
+
+  // Persist each selection, including previous/next navigation.
+  void saveWallpaperState().catch(console.error);
 }
 
 function loadOpenTabs() {
@@ -200,10 +253,6 @@ document.getElementById("nextWallpaper").addEventListener("click", () => {
   if (!wallpapers.length) return;
   currentIndex = (currentIndex + 1) % wallpapers.length;
   applyWallpaper();
-});
-
-document.getElementById("toggleWallpaper").addEventListener("click", () => {
-  document.body.classList.toggle("dim-wallpaper");
 });
 
 const historyObserver = new ResizeObserver(() => renderRecentSites());
